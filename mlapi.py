@@ -13,6 +13,7 @@ class ScoringItem(BaseModel):
     incedence: int
     cgpa: float
 
+# Load model files
 with open('scaler.pkl','rb') as f:
     scaler = pickle.load(f)
     
@@ -28,8 +29,8 @@ with open('adhd.pkl','rb') as f:
 with open('doctor.pkl','rb') as f:
     doctor = pickle.load(f)
 
-@app.post('/predict')
-async def Scoring_Endpoint(item: ScoringItem):
+# Create prediction function
+def predict(item):
     # Ensure consistency in feature names
     feature_mapping = {
         'gender': 'gender 0=female,1=male',
@@ -60,3 +61,8 @@ async def Scoring_Endpoint(item: ScoringItem):
         'adhd': adhd_score[0][1],
         'doctor': doctor_score[0][1]
     }
+
+# Define route
+@app.post('/api/predict')
+async def predict_endpoint(item: ScoringItem):
+    return predict(item)
